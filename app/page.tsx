@@ -4,6 +4,8 @@ import { getJobs } from "./lib/api"
 import type { Job } from "@/interfaces/job.interface"
 import Footer from "./components/Footer"
 
+export const dynamic = "force-dynamic"
+
 export default async function Home() {
   const initialJobs = await getJobs()
   const transformedJobs: Job[] = transformJob(initialJobs)
@@ -19,7 +21,13 @@ export default async function Home() {
           <div className="w-1/2 h-full bg-red-500"></div>
         </div>
 
-        <JobSearch initialJobs={transformedJobs} />
+        {transformedJobs.length > 0 ? (
+          <JobSearch initialJobs={transformedJobs} />
+        ) : (
+          <p className="text-center text-gray-500 text-lg">
+            No hay empleos disponibles en este momento. Intente más tarde.
+          </p>
+        )}
       </div>
       <Footer />
     </main>
