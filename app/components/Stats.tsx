@@ -3,9 +3,13 @@ import StatCard from "./StatCard"
 
 interface StatsProps {
   totalActivesJobs: number
+  totalMinisterios: number
 }
 
-export default function Stats({ totalActivesJobs }: StatsProps) {
+export default function Stats({
+  totalActivesJobs,
+  totalMinisterios,
+}: StatsProps) {
   return (
     <div className="grid grid-cols-1 my-4 sm:grid-cols-2 lg:grid-cols-3 gap-6">
       <StatCard
@@ -20,7 +24,7 @@ export default function Stats({ totalActivesJobs }: StatsProps) {
       <StatCard
         icon={<IconInstitutions />}
         title="Instituciones"
-        value="300+"
+        value={totalMinisterios}
         description="instituciones públicas ofrecen oportunidades laborales."
         bgColor="bg-green-500/20"
         color="text-green-500"

@@ -5,12 +5,17 @@ import { useSearchParams, useRouter } from "next/navigation"
 import type { Job } from "@/interfaces/job.interface"
 import JobList from "./JobList"
 import Stats from "./Stats"
+import { IMinisterios } from "@/interfaces/ministerio.interface"
 
 interface JobSearchProps {
   initialJobs: Job[]
+  ministerios: IMinisterios[]
 }
 
-export default function JobSearch({ initialJobs }: JobSearchProps) {
+export default function JobSearch({
+  initialJobs,
+  ministerios,
+}: JobSearchProps) {
   const searchParams = useSearchParams()
   const router = useRouter()
 
@@ -59,7 +64,12 @@ export default function JobSearch({ initialJobs }: JobSearchProps) {
         </p>
       )}
 
-      {query.trim() === "" && <Stats totalActivesJobs={initialJobs.length} />}
+      {query.trim() === "" && (
+        <Stats
+          totalMinisterios={ministerios.length}
+          totalActivesJobs={initialJobs.length}
+        />
+      )}
 
       <JobList jobs={filteredJobs} isLoading={false} />
     </>

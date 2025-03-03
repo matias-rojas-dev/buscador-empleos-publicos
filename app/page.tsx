@@ -3,12 +3,14 @@ import JobSearch from "./components/JobSearch"
 import { getJobs } from "./lib/api"
 import type { Job } from "@/interfaces/job.interface"
 import Footer from "./components/Footer"
+import { filterByMinisterio } from "@/helpers/filterByMInisterio"
 
 export const dynamic = "force-dynamic"
 
 export default async function Home() {
   const initialJobs = await getJobs()
   const transformedJobs: Job[] = transformJob(initialJobs)
+  const ministerios = filterByMinisterio(transformedJobs)
 
   return (
     <main className="flex lg:justify-center flex-col lg:w-full">
@@ -22,7 +24,7 @@ export default async function Home() {
         </div>
 
         {transformedJobs.length > 0 ? (
-          <JobSearch initialJobs={transformedJobs} />
+          <JobSearch initialJobs={transformedJobs} ministerios={ministerios} />
         ) : (
           <p className="text-center text-gray-500 text-lg">
             No hay empleos disponibles en este momento. Intente más tarde.

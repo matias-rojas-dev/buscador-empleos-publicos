@@ -1,7 +1,7 @@
 interface Props {
   icon: React.ReactNode
   title: string
-  value: string
+  value: string | number
   description: string
   bgColor: string
   color: string
