@@ -1,9 +1,9 @@
 import {
   IMinisterios,
   IRegion,
-  ICiudades,
   IAreaTrabajo,
   ITipoVacante,
+  ICiudad,
 } from "@/interfaces/filters.interface"
 import { ChevronDown, ChevronUp, Filter, X } from "lucide-react"
 import { Dispatch, SetStateAction, useState } from "react"
@@ -25,7 +25,7 @@ interface Props {
   acordeonesAbiertos: AccordeonProps
   ministerios: IMinisterios[]
   regiones: IRegion[]
-  ciudades: ICiudades[]
+  ciudades: ICiudad[]
   areasTrabajo: IAreaTrabajo[]
   tiposVacantes: ITipoVacante[]
 }
@@ -43,8 +43,7 @@ export default function Filters({
   tiposVacantes,
 }: Props) {
   const [rangoSalario, setRangoSalario] = useState([12000, 2000000])
-  const [instituciones, setInstituciones] =
-    useState<IMinisterios[]>(ministerios)
+  const instituciones: IMinisterios[] = ministerios
 
   return (
     <div className="lg:col-span-1 text-black">

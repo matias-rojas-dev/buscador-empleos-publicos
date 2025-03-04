@@ -1,6 +1,6 @@
 import { formatCurrency } from "@/helpers/formatCurrency"
 import type { Job } from "@/interfaces/job.interface"
-import AlertFinishJob from "./AlertFinishJob"
+// import AlertFinishJob from "./AlertFinishJob"
 import { Briefcase, Building2, DollarSign, MapPin } from "lucide-react"
 
 interface Props {
