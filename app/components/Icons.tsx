@@ -1,6 +1,6 @@
 export const IconJobs = () => (
   <svg
-    className="w-8 h-8 text-blue-300"
+    className="w-8 h-8 text-blue-500"
     fill="none"
     stroke="currentColor"
     viewBox="0 0 24 24"
@@ -16,7 +16,7 @@ export const IconJobs = () => (
 
 export const IconInstitutions = () => (
   <svg
-    className="w-8 h-8 text-green-300"
+    className="w-8 h-8 text-purple-500"
     fill="none"
     stroke="currentColor"
     viewBox="0 0 24 24"
@@ -32,7 +32,7 @@ export const IconInstitutions = () => (
 
 export const IconApplicants = () => (
   <svg
-    className="w-8 h-8 text-purple-300"
+    className="w-8 h-8 text-red-500"
     fill="none"
     stroke="currentColor"
     viewBox="0 0 24 24"

@@ -1,6 +1,7 @@
 import { formatCurrency } from "@/helpers/formatCurrency"
 import type { Job } from "@/interfaces/job.interface"
 import AlertFinishJob from "./AlertFinishJob"
+import { Briefcase, Building2, DollarSign, MapPin } from "lucide-react"
 
 interface Props {
   job: Job
@@ -13,55 +14,72 @@ export default function JobCard({ job }: Props) {
   const diffMs = cierreDate.getTime() - now.getTime()
   const diffDays = diffMs / (1000 * 60 * 60 * 24)
 
-  console.log(diffDays)
   return (
-    <div className="relative w-full md:w-[calc(50%-1rem)] lg:w-[calc(24.333%-1rem)] h-[600px] mx-2 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-lg transition-shadow duration-300 flex flex-col justify-between">
-      {diffDays <= 2 && <AlertFinishJob />}
-      <div className="p-6 flex-grow overflow-auto">
-        <h2 className="text-xl font-semibold mb-2 text-gray-900 line-clamp-2">
-          {job.cargo}
-        </h2>
-        <p className="text-gray-600 mb-4 line-clamp-2">{job.institucion}</p>
-        <div className="space-y-2 text-sm">
-          <InfoRow label="Ministerio" value={job.ministerio} />
-          <InfoRow label="Área de Trabajo" value={job.areaTrabajo} />
-          <InfoRow label="Región" value={job.region} />
-          <InfoRow label="Ciudad" value={job.ciudad} />
-          <InfoRow label="Tipo de Vacante" value={job.tipoVacante} />
-          <InfoRow
-            label="Renta Bruta"
-            value={
-              job.rentaBruta === "-"
-                ? "-"
-                : `$${formatCurrency(job.rentaBruta)}`
-            }
-          />
+    <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow">
+      <div className="p-5 border-l-4 border-blue-500">
+        <div className="flex justify-between items-start">
+          <div>
+            <h3 className="text-xl font-semibold mb-2 text-black">
+              {job.cargo}
+            </h3>
+            <p className="text-gray-500 mb-2">{job.institucion}</p>
+          </div>
+          <span className="ml-12 text-center text-xs inline-block px-3 py-1 bg-blue-100 text-blue-800 font-semibold rounded-lg ">
+            {job.tipoVacante}
+          </span>
+        </div>
 
-          <InfoRow label="Fecha de Inicio" value={job.fechaInicio} />
-          <InfoRow label="Fecha de Cierre" value={job.fechaCierre} />
-          <InfoRow label="Tipo de Postulación" value={job.tipoPostulacion} />
-          <InfoRow label="Cargo Profesional" value={job.cargoProfesional} />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+          <div className="flex items-center">
+            <Building2 className="h-4 w-4 mr-2 text-gray-500" />
+            <div>
+              <p className="text-sm text-gray-500">Ministerio</p>
+              <p className="text-sm font-semibold text-black ">
+                {job.ministerio}
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center">
+            <Briefcase className="h-4 w-4 mr-2 text-gray-500" />
+            <div>
+              <p className="text-sm text-gray-500">Área de Trabajo</p>
+              <p className="text-sm font-semibold text-black">
+                {job.areaTrabajo}
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center">
+            <MapPin className="h-4 w-4 mr-2 text-gray-500" />
+            <div>
+              <p className="text-sm text-gray-500">Ubicación</p>
+              <p className="text-sm font-semibold text-black">
+                {job.region} - {job.ciudad}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <hr className="my-4 border-gray-200" />
+
+        <div className="flex justify-between items-center">
+          <div className="flex items-center">
+            <DollarSign className="h-5 w-5 mr-1 text-green-600" />
+            <span className="font-semibold text-black text-lg">
+              Renta Bruta:{" "}
+              {job.rentaBruta === "-"
+                ? "-"
+                : `$${formatCurrency(job.rentaBruta)}`}
+            </span>
+          </div>
+          <p
+            className={`${
+              diffDays < 1 ? "text-red-600 font-semibold" : "text-gray-700"
+            } text-sm`}
+          >
+            Cierre: {job.fechaCierre}
+          </p>
         </div>
       </div>
-      <div className="p-6 border-t">
-        <a
-          href={job.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="block w-full text-center px-4 py-2 bg-gray-900 text-white font-medium rounded-md hover:bg-gray-800 transition duration-300 ease-in-out"
-        >
-          Ver Detalles
-        </a>
-      </div>
     </div>
-  )
-}
-
-function InfoRow({ label, value }: { label: string; value: string }) {
-  return (
-    <p className="flex flex-wrap">
-      <span className="font-medium text-gray-900 mr-1">{label}:</span>
-      <span className="text-gray-600 break-words">{value}</span>
-    </p>
   )
 }
