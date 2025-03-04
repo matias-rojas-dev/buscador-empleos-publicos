@@ -86,6 +86,7 @@ export default function JobSearch({
     )
 
     setFilteredJobs(filtered)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query, router])
 
   // 🔹 Paginar correctamente en base a "filteredJobs"
