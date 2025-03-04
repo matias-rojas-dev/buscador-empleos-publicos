@@ -16,11 +16,19 @@ export default function StatCard({
   color,
 }: Props) {
   return (
-    <div className="bg-white shadow-md rounded-xl p-6 flex flex-col items-center border border-gray-200">
-      <div className={`p-4 rounded-full ${bgColor}`}>{icon}</div>
-      <h2 className="text-lg font-semibold text-gray-900 mt-4">{title}</h2>
-      <p className={`text-3xl font-bold mt-2 ${color}`}>{value}</p>
-      <p className="text-gray-600 text-sm text-center mt-2">{description}</p>
+    <div
+      className={`bg-white rounded-lg shadow-md overflow-hidden border-t-4 ${bgColor}`}
+    >
+      <div className="p-6 text-center">
+        <div className="bg-blue-100 rounded-full p-4 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+          {icon}
+        </div>
+        <h3 className="font-medium text-lg mb-1 text-black">{title}</h3>
+        <p className={`text-4xl font-bold text-blue-500 mb-2 ${color}`}>
+          {value}
+        </p>
+        <p className="text-sm text-gray-500">{description}</p>
+      </div>
     </div>
   )
 }
