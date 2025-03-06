@@ -24,7 +24,7 @@ export default function JobCard({ job }: Props) {
     <div
       onClick={handleClick}
       className={`bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer ${
-        isClicked ? "bg-slate-100" : ""
+        isClicked ? "bg-zinc-100" : ""
       }`}
     >
       <div className="p-5 border-l-4 border-blue-500">
