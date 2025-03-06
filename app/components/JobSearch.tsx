@@ -13,6 +13,7 @@ import Stats from "./Stats"
 import JobCard from "./JobCard"
 import Pagination from "./Pagination"
 import Filters from "./Filters"
+import ExcelDownloader from "./ExcelDownloader"
 
 interface Props {
   jobs: Job[]
@@ -284,19 +285,23 @@ export default function JobSearch({
         />
 
         <div className="lg:col-span-3">
-          <div className="flex items-center mb-10">
-            <p className="text-gray-500">
-              Cantidad de empleos obtenidos:
-              <strong> {filteredJobs.length}</strong>
-            </p>
-            {isLoading && (
-              <div className="ml-3 inline-flex items-center">
-                <div className="h-4 w-4 animate-spin rounded-full border-2 border-solid border-blue-500 border-r-transparent"></div>
-                <span className="ml-2 text-sm text-gray-500">
-                  Actualizando...
-                </span>
-              </div>
-            )}
+          <div className="flex items-center mb-10 justify-between">
+            <div className="flex justify-center">
+              <p className="text-gray-500">
+                Cantidad de empleos obtenidos:
+                <strong> {filteredJobs.length}</strong>
+              </p>
+
+              {isLoading && (
+                <div className="ml-3 inline-flex items-center">
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-solid border-blue-500 border-r-transparent"></div>
+                  <span className="ml-2 text-sm text-gray-500">
+                    Actualizando...
+                  </span>
+                </div>
+              )}
+            </div>
+            <ExcelDownloader jobs={filteredJobs} />
           </div>
 
           <div className="space-y-4">
