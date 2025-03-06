@@ -1,6 +1,6 @@
+import { useState } from "react"
 import { formatCurrency } from "@/helpers/formatCurrency"
 import type { Job } from "@/interfaces/job.interface"
-// import AlertFinishJob from "./AlertFinishJob"
 import { Briefcase, Building2, DollarSign, MapPin } from "lucide-react"
 
 interface Props {
@@ -9,13 +9,24 @@ interface Props {
 
 export default function JobCard({ job }: Props) {
   const now = new Date()
+  const [isClicked, setIsClicked] = useState(false)
 
   const cierreDate = new Date(job.fechaCierre)
   const diffMs = cierreDate.getTime() - now.getTime()
   const diffDays = diffMs / (1000 * 60 * 60 * 24)
 
+  const handleClick = () => {
+    setIsClicked(true)
+    window.open(job.url, "_blank")
+  }
+
   return (
-    <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow">
+    <div
+      onClick={handleClick}
+      className={`bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer ${
+        isClicked ? "bg-zinc-100" : ""
+      }`}
+    >
       <div className="p-5 border-l-4 border-blue-500">
         <div className="flex justify-between items-start">
           <div>

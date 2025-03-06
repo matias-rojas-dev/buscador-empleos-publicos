@@ -9,7 +9,6 @@ import {
 
 export const filterByMinisterio = (jobs: Job[]): IMinisterios[] => {
   const ministerios = [
-    "Todos",
     ...Array.from(new Set(jobs.map((job) => job.ministerio))),
   ]
 
@@ -20,10 +19,7 @@ export const filterByMinisterio = (jobs: Job[]): IMinisterios[] => {
 }
 
 export const filtersByRegion = (jobs: Job[]): IRegion[] => {
-  const regiones = [
-    "Todas",
-    ...Array.from(new Set(jobs.map((job) => job.region))),
-  ]
+  const regiones = [...Array.from(new Set(jobs.map((job) => job.region)))]
 
   return regiones.map((region, index) => ({
     id: index + 1,
@@ -32,11 +28,13 @@ export const filtersByRegion = (jobs: Job[]): IRegion[] => {
 }
 
 export const filtersByCiudad = (jobs: Job[]): ICiudad[] => {
-  const ciudades = [
-    "Todas",
-    ...Array.from(new Set(jobs.map((job) => job.ciudad))),
-  ]
-
+  const ciudades = Array.from(
+    new Set(
+      jobs
+        .map((job) => (job.ciudad || "").trim())
+        .filter((ciudad) => ciudad !== "")
+    )
+  )
   return ciudades.map((ciudad, index) => ({
     id: index + 1,
     name: ciudad,
@@ -44,10 +42,13 @@ export const filtersByCiudad = (jobs: Job[]): ICiudad[] => {
 }
 
 export const filtersAreaTrabajo = (jobs: Job[]): IAreaTrabajo[] => {
-  const areasTrabajo = [
-    "Todas",
-    ...Array.from(new Set(jobs.map((job) => job.areaTrabajo))),
-  ]
+  const areasTrabajo = Array.from(
+    new Set(
+      jobs
+        .map((job) => (job.areaTrabajo || "").trim())
+        .filter((areaTrabajo) => areaTrabajo !== "")
+    )
+  )
 
   return areasTrabajo.map((areaTrabajo, index) => ({
     id: index + 1,
@@ -56,13 +57,15 @@ export const filtersAreaTrabajo = (jobs: Job[]): IAreaTrabajo[] => {
 }
 
 export const filtersTipoVacante = (jobs: Job[]): ITipoVacante[] => {
-  const tiposVacante = [
-    "Todas",
-    ...Array.from(new Set(jobs.map((job) => job.tipoVacante))),
-  ]
-
-  return tiposVacante.map((tiposVacante, index) => ({
+  const tipoVacantes = Array.from(
+    new Set(
+      jobs
+        .map((job) => (job.tipoVacante || "").trim())
+        .filter((tipoVacante) => tipoVacante !== "")
+    )
+  )
+  return tipoVacantes.map((ciudad, index) => ({
     id: index + 1,
-    name: tiposVacante,
+    name: ciudad,
   }))
 }
