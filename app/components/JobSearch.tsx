@@ -14,6 +14,7 @@ import JobCard from "./JobCard"
 import Pagination from "./Pagination"
 import Filters from "./Filters"
 import ExcelDownloader from "./ExcelDownloader"
+import AIJobMatcher from "./AIJobMatcher"
 
 interface Props {
   jobs: Job[]
@@ -36,6 +37,11 @@ export default function JobSearch({
   const router = useRouter()
 
   const [filtrosActivos, setFiltrosActivos] = useState<string[]>([])
+  const [aiRecommendedJobs, setAiRecommendedJobs] = useState<Job[] | null>(null)
+  const handleAIRecommendations = (recommendedJobs: Job[]) => {
+    setAiRecommendedJobs(recommendedJobs)
+  }
+
   const [acordeonesAbiertos, setAcordeonesAbiertos] = useState({
     ministerio: true,
     salario: true,
@@ -84,6 +90,7 @@ export default function JobSearch({
   const jobsPerPage = 12
 
   const [isLoading, setIsLoading] = useState(false)
+  const [showAIPanel, setShowAIPanel] = useState(false)
 
   useEffect(() => {
     const params = new URLSearchParams(searchParams.toString())
@@ -266,6 +273,41 @@ export default function JobSearch({
         totalAreas={areasTrabajo?.length}
       />
 
+      <div className="mb-6">
+        <button
+          onClick={() => setShowAIPanel(!showAIPanel)}
+          className="bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-md transition-colors flex items-center gap-2"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M12 2a8 8 0 0 0-8 8c0 1.5.5 2.5 1.5 3.5L12 20l6.5-6.5c1-1 1.5-2 1.5-3.5a8 8 0 0 0-8-8z"></path>
+            <circle cx="12" cy="10" r="1"></circle>
+          </svg>
+          {showAIPanel
+            ? "Ocultar buscador inteligente"
+            : "Buscar empleos con IA"}
+        </button>
+      </div>
+
+      {/* Panel de IA */}
+      {showAIPanel && (
+        <div className="mb-8 bg-gradient-to-r from-purple-50 to-indigo-50 p-6 rounded-lg border border-purple-100">
+          <AIJobMatcher
+            jobs={jobs}
+            onRecommendations={handleAIRecommendations}
+          />
+        </div>
+      )}
+
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
         <Filters
           agregarFiltro={agregarFiltro}
@@ -302,6 +344,81 @@ export default function JobSearch({
               )}
             </div>
             <ExcelDownloader jobs={filteredJobs} />
+          </div>
+
+          {aiRecommendedJobs && (
+            <div className="mb-6 bg-purple-100 p-4 rounded-md border border-purple-200">
+              <div className="flex items-start">
+                <div className="flex-shrink-0 bg-purple-500 rounded-full p-2">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="white"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+                  </svg>
+                </div>
+                <div className="ml-3">
+                  <h3 className="text-lg font-semibold text-purple-800">
+                    Resultados personalizados
+                  </h3>
+                  <p className="text-purple-700">
+                    Mostrando {aiRecommendedJobs.length} empleos que coinciden
+                    con tu perfil.
+                  </p>
+                </div>
+                <button
+                  className="ml-auto text-purple-700 hover:text-purple-900"
+                  onClick={() => setAiRecommendedJobs(null)}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          )}
+
+          <div className="space-y-4">
+            {(aiRecommendedJobs || paginatedJobs).length > 0 ? (
+              (aiRecommendedJobs || paginatedJobs).map((job, index) => (
+                <JobCard
+                  key={index}
+                  job={job}
+                  isAIRecommended={!!aiRecommendedJobs}
+                />
+              ))
+            ) : (
+              <p className="text-center text-gray-500">
+                No se encontraron empleos que coincidan con los filtros
+                seleccionados.
+              </p>
+            )}
+
+            {!aiRecommendedJobs && totalPages > 1 && (
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+              />
+            )}
           </div>
 
           <div className="space-y-4">
