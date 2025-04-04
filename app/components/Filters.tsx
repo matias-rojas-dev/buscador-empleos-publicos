@@ -1,14 +1,14 @@
-"use client"
+'use client'
 
-import { useState, useEffect } from "react"
-import { Filter, ChevronUp, ChevronDown, X } from "lucide-react"
+import { useState, useEffect } from 'react'
+import { Filter, ChevronUp, ChevronDown, X } from 'lucide-react'
 import type {
   IMinisterios,
   IRegion,
   ICiudad,
   IAreaTrabajo,
   ITipoVacante,
-} from "@/interfaces/filters.interface"
+} from '@/interfaces/filters.interface'
 
 interface FiltersProps {
   agregarFiltro: (filtro: string) => void
@@ -56,7 +56,7 @@ export default function Filters({
 
   useEffect(() => {
     if (rangoSalarioActual) {
-      const range = rangoSalarioActual.replace("Salario: ", "").split("-")
+      const range = rangoSalarioActual.replace('Salario: ', '').split('-')
       const min = Number.parseInt(range[0], 10)
       const max = Number.parseInt(range[1], 10)
       setRangoSalario([min, max])
@@ -129,7 +129,7 @@ export default function Filters({
           <div className="border-b border-gray-200">
             <button
               className="flex justify-between items-center w-full py-3 text-left font-medium"
-              onClick={() => toggleAcordeon("ministerio")}
+              onClick={() => toggleAcordeon('ministerio')}
             >
               Ministerio
               {acordeonesAbiertos.ministerio ? (
@@ -165,7 +165,7 @@ export default function Filters({
           <div className="border-b border-gray-200">
             <button
               className="flex justify-between items-center w-full py-3 text-left font-medium"
-              onClick={() => toggleAcordeon("salario")}
+              onClick={() => toggleAcordeon('salario')}
             >
               Rango Salarial
               {acordeonesAbiertos.salario ? (
@@ -178,10 +178,10 @@ export default function Filters({
               <div className="pb-3 space-y-4">
                 <div className="flex justify-between text-sm">
                   <span>
-                    ${rangoSalario[0].toLocaleString().replaceAll(",", ".")}
+                    ${rangoSalario[0].toLocaleString().replaceAll(',', '.')}
                   </span>
                   <span>
-                    ${rangoSalario[1].toLocaleString().replaceAll(",", ".")}
+                    ${rangoSalario[1].toLocaleString().replaceAll(',', '.')}
                   </span>
                 </div>
 
@@ -250,7 +250,7 @@ export default function Filters({
           <div className="border-b border-gray-200">
             <button
               className="flex justify-between items-center w-full py-3 text-left font-medium"
-              onClick={() => toggleAcordeon("ubicacion")}
+              onClick={() => toggleAcordeon('ubicacion')}
             >
               Ubicación
               {acordeonesAbiertos.ubicacion ? (
@@ -302,7 +302,7 @@ export default function Filters({
           <div className="border-b border-gray-200">
             <button
               className="flex justify-between items-center w-full py-3 text-left font-medium"
-              onClick={() => toggleAcordeon("area")}
+              onClick={() => toggleAcordeon('area')}
             >
               Área de Trabajo
               {acordeonesAbiertos.area ? (
@@ -342,7 +342,7 @@ export default function Filters({
           <div className="border-b border-gray-200">
             <button
               className="flex justify-between items-center w-full py-3 text-left font-medium"
-              onClick={() => toggleAcordeon("tipo")}
+              onClick={() => toggleAcordeon('tipo')}
             >
               Tipo de Vacante
               {acordeonesAbiertos.tipo ? (

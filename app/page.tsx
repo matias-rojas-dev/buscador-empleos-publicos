@@ -1,17 +1,17 @@
-import { transformJob } from "@/helpers/transformJob"
-import JobSearch from "./components/JobSearch"
-import { getJobs } from "./lib/api"
-import type { Job } from "@/interfaces/job.interface"
-import Footer from "./components/Footer"
+import { transformJob } from '@/helpers/transformJob'
+import JobSearch from './components/JobSearch'
+import { getJobs } from './lib/api'
+import type { Job } from '@/interfaces/job.interface'
+import Footer from './components/Footer'
 import {
   filterByMinisterio,
   filtersAreaTrabajo,
   filtersByCiudad,
   filtersByRegion,
   filtersTipoVacante,
-} from "@/helpers/filters"
+} from '@/helpers/filters'
 
-export const dynamic = "force-dynamic"
+export const dynamic = 'force-dynamic'
 
 export default async function Home() {
   const initialJobs = await getJobs()
