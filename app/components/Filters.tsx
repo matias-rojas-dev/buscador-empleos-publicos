@@ -1,34 +1,38 @@
-import {
+'use client'
+
+import { useState, useEffect } from 'react'
+import { Filter, ChevronUp, ChevronDown, X } from 'lucide-react'
+import type {
   IMinisterios,
   IRegion,
+  ICiudad,
   IAreaTrabajo,
   ITipoVacante,
-  ICiudad,
-} from "@/interfaces/filters.interface"
-import { ChevronDown, ChevronUp, Filter, X } from "lucide-react"
-import { Dispatch, SetStateAction, useState } from "react"
+} from '@/interfaces/filters.interface'
 
-interface AccordeonProps {
-  ministerio: boolean
-  salario: boolean
-  ubicacion: boolean
-  area: boolean
-  tipo: boolean
-}
-
-interface Props {
+interface FiltersProps {
   agregarFiltro: (filtro: string) => void
   quitarFiltro: (filtro: string) => void
   toggleAcordeon: (acordeon: string) => void
   filtrosActivos: string[]
-  setFiltrosActivos: Dispatch<SetStateAction<string[]>>
-  acordeonesAbiertos: AccordeonProps
+  setFiltrosActivos: (filtros: string[]) => void
+  acordeonesAbiertos: {
+    ministerio: boolean
+    salario: boolean
+    ubicacion: boolean
+    area: boolean
+    tipo: boolean
+  }
   ministerios: IMinisterios[]
   regiones: IRegion[]
   ciudades: ICiudad[]
   areasTrabajo: IAreaTrabajo[]
   tiposVacantes: ITipoVacante[]
+  rangoSalarioActual: string | null
+  maxSalary: number
+  minSalary: number
 }
+
 export default function Filters({
   agregarFiltro,
   quitarFiltro,
@@ -41,9 +45,51 @@ export default function Filters({
   ciudades,
   areasTrabajo,
   tiposVacantes,
-}: Props) {
-  const [rangoSalario, setRangoSalario] = useState([12000, 2000000])
-  const instituciones: IMinisterios[] = ministerios
+  rangoSalarioActual,
+  maxSalary,
+  minSalary,
+}: FiltersProps) {
+  const [rangoSalario, setRangoSalario] = useState<[number, number]>([
+    minSalary,
+    maxSalary,
+  ])
+
+  useEffect(() => {
+    if (rangoSalarioActual) {
+      const range = rangoSalarioActual.replace('Salario: ', '').split('-')
+      const min = Number.parseInt(range[0], 10)
+      const max = Number.parseInt(range[1], 10)
+      setRangoSalario([min, max])
+    } else {
+      setRangoSalario([minSalary, maxSalary])
+    }
+  }, [rangoSalarioActual])
+
+  const limpiarFiltros = () => {
+    setFiltrosActivos([])
+  }
+
+  const actualizarRangoSalario = (min: number, max: number) => {
+    const newMin = Math.min(min, max)
+    const newMax = Math.max(newMin, max)
+
+    setRangoSalario([newMin, newMax])
+    agregarFiltro(`Salario: ${newMin}-${newMax}`)
+  }
+
+  const handleChangeMin = (valor: number) => {
+    if (valor > rangoSalario[1]) {
+      valor = rangoSalario[1]
+    }
+    actualizarRangoSalario(valor, rangoSalario[1])
+  }
+
+  const handleChangeMax = (valor: number) => {
+    if (valor < rangoSalario[0]) {
+      valor = rangoSalario[0]
+    }
+    actualizarRangoSalario(rangoSalario[0], valor)
+  }
 
   return (
     <div className="lg:col-span-1 text-black">
@@ -51,13 +97,13 @@ export default function Filters({
         <div className="p-5">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold flex items-center">
-              <Filter className="mr-2 h-5 w-5 " />
+              <Filter className="mr-2 h-5 w-5" />
               Filtros
             </h3>
             {filtrosActivos.length > 0 && (
               <button
                 className="text-sm text-gray-500 hover:text-gray-700"
-                onClick={() => setFiltrosActivos([])}
+                onClick={limpiarFiltros}
               >
                 Limpiar
               </button>
@@ -69,7 +115,7 @@ export default function Filters({
               {filtrosActivos.map((filtro) => (
                 <span
                   key={filtro}
-                  className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-gray-200 text-gray-800"
+                  className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-gray-200"
                 >
                   {filtro}
                   <button className="ml-2" onClick={() => quitarFiltro(filtro)}>
@@ -80,11 +126,10 @@ export default function Filters({
             </div>
           )}
 
-          {/* Acordeón de Ministerio */}
           <div className="border-b border-gray-200">
             <button
-              className="flex justify-between items-center w-full py-3 text-left font-semibold"
-              onClick={() => toggleAcordeon("ministerio")}
+              className="flex justify-between items-center w-full py-3 text-left font-medium"
+              onClick={() => toggleAcordeon('ministerio')}
             >
               Ministerio
               {acordeonesAbiertos.ministerio ? (
@@ -104,10 +149,12 @@ export default function Filters({
                       }`
                     )
                   }
+                  value=""
                 >
-                  {instituciones.map((institucion, index) => (
-                    <option key={index} value={institucion.name}>
-                      {institucion.name}
+                  <option value="">Seleccionar ministerio</option>
+                  {ministerios?.map((ministerio) => (
+                    <option key={ministerio.id} value={ministerio.id}>
+                      {ministerio.name}
                     </option>
                   ))}
                 </select>
@@ -115,11 +162,10 @@ export default function Filters({
             )}
           </div>
 
-          {/* Acordeón de Rango Salarial */}
           <div className="border-b border-gray-200">
             <button
-              className="flex justify-between items-center w-full py-3 text-left font-semibold"
-              onClick={() => toggleAcordeon("salario")}
+              className="flex justify-between items-center w-full py-3 text-left font-medium"
+              onClick={() => toggleAcordeon('salario')}
             >
               Rango Salarial
               {acordeonesAbiertos.salario ? (
@@ -131,64 +177,70 @@ export default function Filters({
             {acordeonesAbiertos.salario && (
               <div className="pb-3 space-y-4">
                 <div className="flex justify-between text-sm">
-                  <span>${rangoSalario[0].toLocaleString()}</span>
-                  <span>${rangoSalario[1].toLocaleString()}</span>
+                  <span>
+                    ${rangoSalario[0].toLocaleString().replaceAll(',', '.')}
+                  </span>
+                  <span>
+                    ${rangoSalario[1].toLocaleString().replaceAll(',', '.')}
+                  </span>
                 </div>
+
+                {/* Range para mínimo */}
                 <input
                   type="range"
                   min="0"
-                  max="3000000"
-                  step="10000"
+                  max={maxSalary}
+                  step={minSalary}
                   value={rangoSalario[0]}
                   onChange={(e) => {
                     const newValue = Number.parseInt(e.target.value)
-                    setRangoSalario([newValue, rangoSalario[1]])
-                    agregarFiltro(
-                      `Salario mínimo: $${newValue.toLocaleString()}`
-                    )
+                    handleChangeMin(newValue)
                   }}
                   className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
                 />
+
+                {/* Range para máximo */}
                 <input
                   type="range"
                   min="0"
-                  max="3000000"
-                  step="10000"
+                  max={maxSalary}
+                  step={minSalary}
                   value={rangoSalario[1]}
                   onChange={(e) => {
                     const newValue = Number.parseInt(e.target.value)
-                    setRangoSalario([rangoSalario[0], newValue])
-                    agregarFiltro(
-                      `Salario máximo: $${newValue.toLocaleString()}`
-                    )
+                    handleChangeMax(newValue)
                   }}
                   className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
                 />
+
                 <div className="grid grid-cols-2 gap-2">
-                  <div>
+                  {/* Input numérico para mínimo */}
+                  {/* <div>
                     <label className="text-sm text-gray-500">Mínimo</label>
                     <input
                       type="number"
                       value={rangoSalario[0]}
                       onChange={(e) => {
                         const newValue = Number.parseInt(e.target.value)
-                        setRangoSalario([newValue, rangoSalario[1]])
+                        handleChangeMin(newValue.toLocaleString())
                       }}
                       className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
-                  </div>
-                  <div>
+                  </div> */}
+
+                  {/* Input numérico para máximo */}
+                  {/* <div>
                     <label className="text-sm text-gray-500">Máximo</label>
                     <input
                       type="number"
                       value={rangoSalario[1]}
                       onChange={(e) => {
                         const newValue = Number.parseInt(e.target.value)
-                        setRangoSalario([rangoSalario[0], newValue])
+                        handleChangeMax(newValue)
                       }}
                       className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
-                  </div>
+                  </div> */}
                 </div>
               </div>
             )}
@@ -197,8 +249,8 @@ export default function Filters({
           {/* Acordeón de Ubicación */}
           <div className="border-b border-gray-200">
             <button
-              className="flex justify-between items-center w-full py-3 text-left font-semibold"
-              onClick={() => toggleAcordeon("ubicacion")}
+              className="flex justify-between items-center w-full py-3 text-left font-medium"
+              onClick={() => toggleAcordeon('ubicacion')}
             >
               Ubicación
               {acordeonesAbiertos.ubicacion ? (
@@ -216,9 +268,11 @@ export default function Filters({
                       `Región: ${e.target.options[e.target.selectedIndex].text}`
                     )
                   }
+                  value=""
                 >
-                  {regiones.map((region, index) => (
-                    <option key={index} value={region.name}>
+                  <option value="">Seleccionar región</option>
+                  {regiones?.map((region) => (
+                    <option key={region.id} value={region.id}>
                       {region.name}
                     </option>
                   ))}
@@ -231,9 +285,11 @@ export default function Filters({
                       `Ciudad: ${e.target.options[e.target.selectedIndex].text}`
                     )
                   }
+                  value=""
                 >
-                  {ciudades.map((ciudad, index) => (
-                    <option key={index} value={ciudad.name}>
+                  <option value="">Seleccionar ciudad</option>
+                  {ciudades?.map((ciudad) => (
+                    <option key={ciudad.id} value={ciudad.id}>
                       {ciudad.name}
                     </option>
                   ))}
@@ -245,8 +301,8 @@ export default function Filters({
           {/* Acordeón de Área de Trabajo */}
           <div className="border-b border-gray-200">
             <button
-              className="flex justify-between items-center w-full py-3 text-left font-semibold"
-              onClick={() => toggleAcordeon("area")}
+              className="flex justify-between items-center w-full py-3 text-left font-medium"
+              onClick={() => toggleAcordeon('area')}
             >
               Área de Trabajo
               {acordeonesAbiertos.area ? (
@@ -255,29 +311,29 @@ export default function Filters({
                 <ChevronDown className="h-5 w-5" />
               )}
             </button>
+
             {acordeonesAbiertos.area && (
-              <div className="pb-3 space-y-2 overflow-auto h-[200px]">
-                {areasTrabajo.map(({ name, id }) => {
-                  return (
-                    <div key={id} className="flex items-center space-x-2">
-                      <input
-                        type="checkbox"
-                        id={String(id)}
-                        className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            agregarFiltro(`Área: ${name}`)
-                          } else {
-                            quitarFiltro(`Área: ${name}`)
-                          }
-                        }}
-                      />
-                      <label htmlFor={String(id)} className="text-sm">
-                        {name}
-                      </label>
-                    </div>
-                  )
-                })}
+              <div className="pb-3 space-y-2 overflow-y-auto h-[200px]">
+                {areasTrabajo?.map((area) => (
+                  <div key={area.id} className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      id={`area-${area.id}`}
+                      className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          agregarFiltro(`Área: ${area.name}`)
+                        } else {
+                          quitarFiltro(`Área: ${area.name}`)
+                        }
+                      }}
+                      checked={filtrosActivos.includes(`Área: ${area.name}`)}
+                    />
+                    <label htmlFor={`area-${area.id}`} className="text-sm">
+                      {area.name}
+                    </label>
+                  </div>
+                ))}
               </div>
             )}
           </div>
@@ -285,8 +341,8 @@ export default function Filters({
           {/* Acordeón de Tipo de Vacante */}
           <div className="border-b border-gray-200">
             <button
-              className="flex justify-between items-center w-full py-3 text-left font-semibold"
-              onClick={() => toggleAcordeon("tipo")}
+              className="flex justify-between items-center w-full py-3 text-left font-medium"
+              onClick={() => toggleAcordeon('tipo')}
             >
               Tipo de Vacante
               {acordeonesAbiertos.tipo ? (
@@ -296,21 +352,25 @@ export default function Filters({
               )}
             </button>
             {acordeonesAbiertos.tipo && (
-              <div className="pb-3 space-y-2 overflow-auto h-[200px]">
-                {tiposVacantes.map(({ name, id }) => (
-                  <div key={id} className="flex items-center space-x-2">
+              <div className="pb-3 space-y-2 overflow-y-auto h-[200px]">
+                {tiposVacantes?.map((tipo) => (
+                  <div key={tipo.id} className="flex items-center space-x-2">
                     <input
                       type="checkbox"
+                      id={`tipo-${tipo.id}`}
                       className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                       onChange={(e) => {
                         if (e.target.checked) {
-                          agregarFiltro(`Tipo: ${name}`)
+                          agregarFiltro(`Tipo: ${tipo.name}`)
                         } else {
-                          quitarFiltro(`Tipo: ${name}`)
+                          quitarFiltro(`Tipo: ${tipo.name}`)
                         }
                       }}
+                      checked={filtrosActivos.includes(`Tipo: ${tipo.name}`)}
                     />
-                    <label className="text-sm">{name}</label>
+                    <label htmlFor={`tipo-${tipo.id}`} className="text-sm">
+                      {tipo.name}
+                    </label>
                   </div>
                 ))}
               </div>
