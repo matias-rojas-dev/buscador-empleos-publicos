@@ -21,7 +21,7 @@ export default async function Home() {
   const ciudades = filtersByCiudad(transformedJobs)
   const tiposVacantes = filtersTipoVacante(transformedJobs)
   const areasTrabajo = filtersAreaTrabajo(transformedJobs)
-
+  
   return (
     <main className="flex lg:justify-center flex-col lg:w-full">
       <div className="m-2 lg:m-10 lg:mx-1">
